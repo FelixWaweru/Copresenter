@@ -7,14 +7,6 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Sidebar = ({ children } : any) => {
 
-  const defaultList = [
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five",
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only centuries",
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not five centuries",
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived only five centuries",
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has not only five centuries"
-  ];
-
   const jsonList = [
     {
       "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not five",
@@ -27,19 +19,15 @@ const Sidebar = ({ children } : any) => {
     {
       "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has not only five",
       "presenter": "BOT"
-    },
-    {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It survived not only five",
-      "presenter": "PERSON"
     }
   ];
 
   // React state to track order of items
   const [itemList, setItemList] = useState(jsonList);
+  const [newSlideOpen, setNewSlideOpen] = useState(false);
 
-  const dashboardLink = `/dashboard/`;
-  const historyLink = `/history/`;
-  const billingLink = `/billing/`;
+  const [newSlidePresenter, setNewSlidePresenter] = useState("BOT");
+  const [newSlideText, setNewSlideText] = useState("");
 
   // Function to update list on drop
   const handleDrop = (result) => {
@@ -56,7 +44,7 @@ const Sidebar = ({ children } : any) => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    background: isDragging ? "#77dd77" : "#ffffff",
+    background: isDragging ? "#ffffffe6" : "#ffffff",
     // styles we need to apply on draggables
     ...draggableStyle
   });
@@ -85,7 +73,32 @@ const Sidebar = ({ children } : any) => {
   }
 
   const handleNewSlide = () => {
-    console.log("New Slide")
+    setNewSlideOpen(wasOpened => !wasOpened);
+  }
+
+  const handleNewSlideText = (event) => {
+    const newText = event.target.value;
+    console.log(newText)
+
+    setNewSlideText(newText);
+  }
+
+  const handleNewSlidePresenter = (event) => {
+    const newPresenter = event.target.value;
+
+    setNewSlidePresenter(newPresenter);
+  };
+
+  const handleNewSlideSave = () => {
+    const newSlide = {
+      text: newSlideText,
+      presenter: newSlidePresenter
+    }
+
+    const newItemList = [...itemList, newSlide];
+
+    setItemList(newItemList);
+    setNewSlideOpen(wasOpened => !wasOpened);
   }
 
   const containerStyle = {
@@ -97,7 +110,7 @@ const Sidebar = ({ children } : any) => {
     <div className='flex'>
       <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between'>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
-          <Link href={historyLink}>
+          <Link href='/'>
             <div className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
               <PencilIcon className="h-6 w-6 text-primary"/>
             </div>
@@ -112,12 +125,9 @@ const Sidebar = ({ children } : any) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
-                      <PlusIcon className="h-6 w-6 mr-2"/>
-                      Add New Slide
-                    </div>
-                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
-                      <select className='w-2/4' id="dropdown" value="AI Name">
+                    <div className='mb-5 m-1 p-5 w-full bg-gray-200 rounded-lg text-gray-800' onClick={handleNewSlide}>
+                      Select AI Speaker
+                      <select className='w-full' id="dropdown" value="AI Name">
                         <option value="BOT">🤖 AI</option>
                         <option value="PERSON">🧑🏽 PERSON</option>
                       </select>
@@ -158,6 +168,41 @@ const Sidebar = ({ children } : any) => {
                       </Draggable>
                     ))}
                     {provided.placeholder}
+
+                    {newSlideOpen && (
+                    <div
+                    className='m-1 mt-5 p-3 w-full rounded-lg text-gray-800 text-sm bg-white'
+                    >
+                      <div className='flex'>                            
+                        <h2 className='text-green-500 text-lg w-1/4'>
+                          +
+                        </h2>
+                        <select className='w-2/4' id="dropdown" value={newSlidePresenter} onChange={event => handleNewSlidePresenter(event)}>
+                          <option value="BOT">🤖 AI</option>
+                          <option value="PERSON">🧑🏽 PERSON</option>
+                        </select>
+                      </div>
+                      <br />
+
+                      <textarea name="body" className='w-full border border-2 border-gray-500 rounded-lg' 
+                        placeholder='Add Speaker Lines Here..'
+                        onChange={event => handleNewSlideText(event)}/>
+                      <div className='flex'>
+                        <div className='w-auto bg-green-400 hover:bg-green-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={handleNewSlideSave}>
+                          Save
+                        </div>
+                        <div className='w-auto bg-red-400 hover:bg-red-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={handleNewSlide}>
+                          Cancel
+                        </div>
+                      </div>
+                    </div>
+                    )}
+                    {!newSlideOpen && (
+                    <div className='flex mt-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
+                      <PlusIcon className="h-6 w-6 mr-2"/>
+                      Add New Slide
+                    </div>
+                    )}
                   </div>
                 )}
               </Droppable>
