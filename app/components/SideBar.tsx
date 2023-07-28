@@ -193,7 +193,8 @@ const Sidebar = ({ children } : any) => {
                       </div>
                       <br />
 
-                      <textarea name="body" className='w-full border border-2 border-gray-500 rounded-lg' 
+                      <textarea name="body" className='w-full border border-2 border-gray-500 rounded-lg'
+                        maxLength={200}
                         placeholder='Add Speaker Lines Here..'
                         onChange={event => handleNewSlideText(event)}/>
                       <div className='flex'>
