@@ -3,23 +3,25 @@ import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/solid';
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
 
 const Sidebar = ({ children } : any) => {
+  // Fixes weird bug (https://github.com/atlassian/react-beautiful-dnd/issues/1756#issuecomment-599388505)
+  resetServerContext()
 
   const jsonList = [
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not five",
+      "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
       "presenter": "BOT"
     },
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived only five",
+      "text": "Add your own reading parts for whenever the presentation needs a human touch.",
       "presenter": "PERSON"
     },
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has not only five",
-      "presenter": "BOT"
+      "text": "Drag & Drop to reorder the list. You can also edit and delete any slide. Go on, try it out 🧪",
+      "presenter": "PERSON"
     }
   ];
 
@@ -140,13 +142,13 @@ const Sidebar = ({ children } : any) => {
                       </select>
                     </div>
                     {itemList.map((item, index) => (
-                      <Draggable key={index} draggableId={index.toString()} index={index}>
+                      <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
                           className='m-1 p-3 w-full rounded-lg text-gray-800 text-sm'
                             ref={provided.innerRef}
-                            {...provided.dragHandleProps}
                             {...provided.draggableProps}
+                            {...provided.dragHandleProps}
                             style={getItemStyle(
                               snapshot.isDragging,
                               provided.draggableProps.style
