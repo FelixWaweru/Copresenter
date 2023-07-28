@@ -102,7 +102,7 @@ const Sidebar = ({ children } : any) => {
               <PencilIcon className="h-6 w-6 text-primary"/>
             </div>
           </Link>
-          
+
           <div className="w-full">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
@@ -112,9 +112,15 @@ const Sidebar = ({ children } : any) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg' onClick={handleNewSlide}>
-                      <PlusIcon className="h-6 w-6 mr-2 text-primary"/>
+                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
+                      <PlusIcon className="h-6 w-6 mr-2"/>
                       Add New Slide
+                    </div>
+                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
+                      <select className='w-2/4' id="dropdown" value="AI Name">
+                        <option value="BOT">🤖 AI</option>
+                        <option value="PERSON">🧑🏽 PERSON</option>
+                      </select>
                     </div>
                     {itemList.map((item, index) => (
                       <Draggable key={item} draggableId={index.toString()} index={index}>
