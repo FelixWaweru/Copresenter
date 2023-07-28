@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@heroicons/react':
-    specifier: ^2.0.18
-    version: 2.0.18(react@18.2.0)
+    specifier: ^1.0.6
+    version: 1.0.6(react@18.2.0)
   '@types/node':
     specifier: 20.4.5
     version: 20.4.5
@@ -104,8 +104,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: false
 
-  /@heroicons/react@2.0.18(react@18.2.0):
-    resolution: {integrity: sha512-7TyMjRrZZMBPa+/5Y8lN0iyvUU/01PeMGX2+RE7cQWpEUIcb4QotzUObFkJDejj/HUH4qjP/eQ0gzzKs2f+6Yw==}
+  /@heroicons/react@1.0.6(react@18.2.0):
+    resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
     peerDependencies:
       react: '>= 16'
     dependencies:
