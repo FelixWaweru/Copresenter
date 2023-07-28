@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ClockIcon } from '@heroicons/react/solid';
+import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/solid';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
 const Sidebar = ({ children } : any) => {
@@ -56,21 +56,37 @@ const Sidebar = ({ children } : any) => {
   };
 
   const getItemStyle = (isDragging, draggableStyle) => ({
-    background: isDragging ? "#77dd77" : "#ff964f",
+    background: isDragging ? "#77dd77" : "#ffffff",
     // styles we need to apply on draggables
     ...draggableStyle
   });
 
-  const handlePresenterChange = ({event, itemValue} : any) => {
-    const newItemList = itemList;
+  const handlePresenterChange = (event, itemValue) => {
+    const newItemList = [...itemList];
     const newValue = event.target.value;
 
     if (newItemList[itemValue].presenter !== newValue) {
       newItemList[itemValue].presenter = newValue;
     }
-
     setItemList(newItemList);
   };
+
+  const handleEdit = (itemValue) => {
+    console.log(itemValue)
+  }
+
+  const handleDelete = (itemValue) => {
+    let newItemList = [...itemList];
+    newItemList.splice(itemValue, 1);
+
+    console.log(newItemList)
+
+    setItemList(newItemList);
+  }
+
+  const handleNewSlide = () => {
+    console.log("New Slide")
+  }
 
   const containerStyle = {
     height: '100%', // Adjust the height as needed
@@ -83,10 +99,10 @@ const Sidebar = ({ children } : any) => {
         <div className='flex flex-col items-center p-4' style={containerStyle}>
           <Link href={historyLink}>
             <div className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
-              <ClockIcon className="h-6 w-6 text-primary"/>
+              <PencilIcon className="h-6 w-6 text-primary"/>
             </div>
           </Link>
-          <span className='border-b-[1px] border-gray-200 w-full p-2'></span>
+          
           <div className="w-full">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
@@ -96,8 +112,12 @@ const Sidebar = ({ children } : any) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
+                    <div className='flex mb-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg' onClick={handleNewSlide}>
+                      <PlusIcon className="h-6 w-6 mr-2 text-primary"/>
+                      Add New Slide
+                    </div>
                     {itemList.map((item, index) => (
-                      <Draggable key={item} draggableId={item} index={index}>
+                      <Draggable key={item} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
                           className='m-1 p-3 w-full rounded-lg text-gray-800 text-sm'
@@ -109,13 +129,22 @@ const Sidebar = ({ children } : any) => {
                               provided.draggableProps.style
                             )}
                           >
-                            <h2 className='text-white text-lg'>
-                              {index + 1} 🤖
-                            </h2>
-                            <select id="dropdown" value={item.presenter} onChange={event => handlePresenterChange(event, index)}>
-                              <option value="BOT">BOT</option>
-                              <option value="PERSON">PERSON</option>
-                            </select>
+                            <div className='flex'>                            
+                              <h2 className='text-green-500 text-lg w-1/4'>
+                                {index + 1}
+                              </h2>
+                              <select className='w-2/4' id="dropdown" value={item.presenter} onChange={event => handlePresenterChange(event, index)}>
+                                <option value="BOT">🤖 AI</option>
+                                <option value="PERSON">🧑🏽 PERSON</option>
+                              </select>
+                              <div className='w-auto bg-green-400 hover:bg-green-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleEdit(index)}>
+                                <PencilIcon className="h-4 w-4 text-primary"/>
+                              </div>
+                              <div className='w-auto bg-red-400 hover:bg-red-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleDelete(index)}>
+                                <TrashIcon className="h-4 w-4 text-primary"/>
+                              </div>
+                            </div>
+                            <br />
 
                             {item.text}
                           </div>
@@ -127,7 +156,7 @@ const Sidebar = ({ children } : any) => {
                 )}
               </Droppable>
             </DragDropContext>
-        </div>
+          </div>
         </div>
       </div>
       <main className='ml-auto w-3/4'>{children}</main>
