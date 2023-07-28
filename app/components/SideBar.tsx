@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/solid';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import TextView from './TextView';
 
 const Sidebar = ({ children } : any) => {
 
@@ -28,6 +29,8 @@ const Sidebar = ({ children } : any) => {
 
   const [newSlidePresenter, setNewSlidePresenter] = useState("BOT");
   const [newSlideText, setNewSlideText] = useState("");
+
+  const [scroll, setScroll] = useState(false);
 
   // Function to update list on drop
   const handleDrop = (result) => {
@@ -101,6 +104,10 @@ const Sidebar = ({ children } : any) => {
     setNewSlideOpen(wasOpened => !wasOpened);
   }
 
+  const handleScrollButtonClick = () => {
+    setScroll(!scroll);
+  };
+
   const containerStyle = {
     height: '100%', // Adjust the height as needed
     overflow: 'auto',
@@ -133,7 +140,7 @@ const Sidebar = ({ children } : any) => {
                       </select>
                     </div>
                     {itemList.map((item, index) => (
-                      <Draggable key={item} draggableId={index.toString()} index={index}>
+                      <Draggable key={index} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
                           className='m-1 p-3 w-full rounded-lg text-gray-800 text-sm'
@@ -145,7 +152,7 @@ const Sidebar = ({ children } : any) => {
                               provided.draggableProps.style
                             )}
                           >
-                            <div className='flex'>                            
+                            <div className='flex'>                        
                               <h2 className='text-green-500 text-lg w-1/4'>
                                 {index + 1}
                               </h2>
@@ -177,7 +184,7 @@ const Sidebar = ({ children } : any) => {
                         <h2 className='text-green-500 text-lg w-1/4'>
                           +
                         </h2>
-                        <select className='w-2/4' id="dropdown" value={newSlidePresenter} onChange={event => handleNewSlidePresenter(event)}>
+                        <select className='w-3/4' id="dropdown" value={newSlidePresenter} onChange={event => handleNewSlidePresenter(event)}>
                           <option value="BOT">🤖 AI</option>
                           <option value="PERSON">🧑🏽 PERSON</option>
                         </select>
@@ -210,7 +217,8 @@ const Sidebar = ({ children } : any) => {
           </div>
         </div>
       </div>
-      <main className='ml-auto w-3/4'>{children}</main>
+      {/* <main className='ml-auto w-3/4'>{children}</main> */}
+      <TextView itemList={itemList} />
     </div>
   );
 };
