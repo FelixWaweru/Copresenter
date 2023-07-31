@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
+import Loader from './Loader';
 require('dotenv').config();
 
 const Sidebar = ({ children } : any) => {
@@ -15,19 +16,61 @@ const Sidebar = ({ children } : any) => {
     {
       "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
       "presenter": "BOT",
-       "audio_link": ""
+       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/e2c4cfae-d0b5-4135-ace6-bbcb62a503bd.mp3"
+    },
+    {
+      "text": "Drag & Drop to reorder the list. You can also edit and delete any slide. Go on, try it out 🧪",
+      "presenter": "BOT",
+      "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/13a4ab41-27a6-41ec-bb2c-cbcf44d2faaf.mp3"
     },
     {
       "text": "Add your own reading parts for whenever the presentation needs a human touch.",
       "presenter": "PERSON",
        "audio_link": ""
-    },
-    {
-      "text": "Drag & Drop to reorder the list. You can also edit and delete any slide. Go on, try it out 🧪",
-      "presenter": "PERSON",
-      "audio_link": ""
     }
   ];
+
+  // const aiVoiceList = [
+  //   { name: 'Rachel', id: '21m00Tcm4TlvDq8ikWAM' },
+  //   { name: 'Clyde', id: '2EiwWnXFnvU5JabPnv8n' },
+  //   { name: 'Domi', id: 'AZnzlk1XvdvUeBnXmlld' },
+  //   { name: 'Dave', id: 'CYw3kZ02Hs0563khs1Fj' },
+  //   { name: 'Fin', id: 'D38z5RcWu1voky8WS1ja' },
+  //   { name: 'Bella', id: 'EXAVITQu4vr4xnSDxMaL' },
+  //   { name: 'Antoni', id: 'ErXwobaYiN019PkySvjV' },
+  //   { name: 'Thomas', id: 'GBv7mTt0atIp3Br8iCZE' },
+  //   { name: 'Charlie', id: 'IKne3meq5aSn9XLyUdCD' },
+  //   { name: 'Emily', id: 'LcfcDJNUP1GQjkzn1xUU' },
+  //   { name: 'Elli', id: 'MF3mGyEYCl7XYWbV9V6O' },
+  //   { name: 'Callum', id: 'N2lVS1w4EtoT3dr4eOWO' },
+  //   { name: 'Patrick', id: 'ODq5zmih8GrVes37Dizd' },
+  //   { name: 'Harry ', id: 'SOYHLrjzK2X1ezoPC6cr' },
+  //   { name: 'Liam', id: 'TX3LPaxmHKxFdv7VOQHJ' },
+  //   { name: 'Dorothy', id: 'ThT5KcBeYPX3keUQqHPh' },
+  //   { name: 'Josh', id: 'TxGEqnHWrfWFTfGW9XjX' },
+  //   { name: 'Arnold', id: 'VR6AewLTigWG4xSOukaG' },
+  //   { name: 'Charlotte', id: 'XB0fDUnXU5powFXDhCwa' },
+  //   { name: 'Matilda ', id: 'XrExE9yKIg1WjnnlVkGX' },
+  //   { name: 'Matthew', id: 'Yko7PKHZNXotIFUBG7I9' },
+  //   { name: 'James', id: 'ZQe5CZNOzWyzPSCn5a3c' },
+  //   { name: 'Joseph', id: 'Zlb1dXrM653N07WRdFW3' },
+  //   { name: 'Jeremy', id: 'bVMeCyTHy58xNoL34h3p' },
+  //   { name: 'Michael ', id: 'flq6f7yk4E4fJM5XTYuZ' },
+  //   { name: 'Ethan', id: 'g5CIjZEefAph4nQFvHAz' },
+  //   { name: 'Gigi', id: 'jBpfuIE2acCO8z3wKNLl' },
+  //   { name: 'Freya', id: 'jsCqWAovK2LkecY7zXl4' },
+  //   { name: 'Grace', id: 'oWAxZDx7w5VEj9dCyTzz' },
+  //   { name: 'Daniel', id: 'onwK4e9ZLuTAKqWW03F9' },
+  //   { name: 'Serena', id: 'pMsXgVXv3BLzUgSXRplE' },
+  //   { name: 'Adam', id: 'pNInz6obpgDQGcFmaJgB' },
+  //   { name: 'Nicole', id: 'piTKgcLEGmPE4e6mEKli' },
+  //   { name: 'Jessie', id: 't0jbNlBVZ17f02VDIeMI' },
+  //   { name: 'Ryan ', id: 'wViXBPUzp2ZZixB1xQuM' },
+  //   { name: 'Sam', id: 'yoZ06aMxZJJ28mfd3POQ' },
+  //   { name: 'Glinda', id: 'z9fAnlkpzviPz146aGWa' },
+  //   { name: 'Giovanni', id: 'zcAOhNBS3c14rBihAFp1' },
+  //   { name: 'Mimi ', id: 'zrHiDhphv9ZnVXBqCLjz' }
+  // ];
 
   // React state to track order of items
   const [itemList, setItemList] = useState(jsonList);
@@ -36,6 +79,7 @@ const Sidebar = ({ children } : any) => {
   const [newSlidePresenter, setNewSlidePresenter] = useState("BOT");
   const [newSlideText, setNewSlideText] = useState("");
 
+  const [loading, setLoading] = useState(false);
   const [scroll, setScroll] = useState(false);
 
   // Function to update list on drop
@@ -58,19 +102,23 @@ const Sidebar = ({ children } : any) => {
     ...draggableStyle
   });
 
-  const handlePresenterChange = (event, itemValue) => {
+  const handlePresenterChange = async (event, itemValue) => {
     const newItemList = [...itemList];
     const newValue = event.target.value;
 
     if (newItemList[itemValue].presenter !== newValue) {
       newItemList[itemValue].presenter = newValue;
+
+      if(newValue === "BOT") {
+        const responseUrl = await audioGen(newItemList[itemValue].text);
+        console.log(responseUrl)
+
+        newItemList[itemValue].audio_link = responseUrl.publicUrl ? responseUrl.publicUrl : ""
+      }
     }
+    console.log(newItemList)
     setItemList(newItemList);
   };
-
-  const handleEdit = (itemValue) => {
-    console.log(itemValue)
-  }
 
   const handleDelete = (itemValue) => {
     let newItemList = [...itemList];
@@ -102,13 +150,12 @@ const Sidebar = ({ children } : any) => {
     let newSlide = {};
 
     if(newSlidePresenter === "BOT") {
-
       const responseUrl = await audioGen(newSlideText);
 
       newSlide = {
         text: newSlideText,
         presenter: newSlidePresenter,
-        audio_link: responseUrl
+        audio_link: responseUrl.publicUrl ? responseUrl.publicUrl : ""
       }
     }
     else {
@@ -117,7 +164,7 @@ const Sidebar = ({ children } : any) => {
           presenter: newSlidePresenter,
           audio_link: ""
         }
-      }
+    }
 
     const newItemList = [...itemList, newSlide];
 
@@ -134,22 +181,34 @@ const Sidebar = ({ children } : any) => {
     overflow: 'auto',
   };
 
-const audioGen = async (text) => {
+  
+  const audioGen = async (text) => {
+    setLoading(true);
+
     const data = {
       text: text
     };
 
+    const headers = {
+      'Content-Type': 'application/json'
+    };
+
     const response = await fetch("/api/elevenlabs", {
       method: "POST",
+      headers: headers,
       body: JSON.stringify(data),
     });
 
+    setLoading(false);
     return response.json();
-  }
+  };
 
   return (
     <div className='flex'>
-      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#252627'}}>
+      {loading && 
+        (<Loader />)
+      }
+      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#111827'}}>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
           <div className="w-full">
             <DragDropContext onDragEnd={handleDrop}>
@@ -160,12 +219,8 @@ const audioGen = async (text) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className='mb-5 m-1 p-3 w-full bg-green-400 rounded-lg text-gray-800 text-base'>
-                      Select Voice
-                      <select className='w-full' id="dropdown" value="AI Name">
-                        <option value="BOT">🤖 AI</option>
-                        <option value="PERSON">🧑🏽 PERSON</option>
-                      </select>
+                    <div className='mb-5 m-1 pb-5 p-3 w-full rounded-lg text-white text-2xl text-center'>
+                      Copresenter
                     </div>
                     {itemList.map((item, index) => (
                       <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
@@ -188,8 +243,8 @@ const audioGen = async (text) => {
                                 <option value="BOT">🤖 AI</option>
                                 <option value="PERSON">🧑🏽 PERSON</option>
                               </select>
-                              <div className='w-auto bg-green-400 hover:bg-green-300 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleEdit(index)}>
-                                <PencilIcon className="h-4 w-4 text-primary"/>
+                              <div className='w-auto cursor-pointer mx-1 p-2 rounded-lg inline-block'>
+                                
                               </div>
                               <div className='w-auto bg-red-400 hover:bg-red-300 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleDelete(index)}>
                                 <TrashIcon className="h-4 w-4 text-primary"/>

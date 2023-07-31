@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpeakerWaveIcon, SpeakerXMarkIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
 
 const TextView = ({ itemList }) => {
   const [scroll, setScroll] = useState(false);
@@ -21,6 +20,10 @@ const TextView = ({ itemList }) => {
 
     if (currentSlide < itemList.length - 1 && currentSlide >= 0) {
       setCurrentSlide(nextSlideValue);
+
+      if(itemList[nextSlideValue].presenter === "BOT" && itemList[nextSlideValue].audio_link !== "" && speaking) {
+        audioPlay(itemList[nextSlideValue].audio_link);
+      }
     }
   };
 
@@ -29,12 +32,33 @@ const TextView = ({ itemList }) => {
 
     if (currentSlide <= itemList.length - 1 && currentSlide > 0) {
       setCurrentSlide(prevSlideValue);
+
+      if(itemList[prevSlideValue].presenter === "BOT" && itemList[prevSlideValue].audio_link !== "" && speaking) {
+        audioPlay(itemList[prevSlideValue].audio_link);
+      }
     }
   };
 
   const handleAudioPlayerToggle = () => {
-    setSpeaking(!speaking);
+    const newSpeaking = !speaking;
+    setSpeaking(newSpeaking);
+
+    if(itemList[currentSlide].presenter === "BOT" && itemList[currentSlide].audio_link !== "" && newSpeaking) {
+      audioPlay(itemList[currentSlide].audio_link);
+    }
   };
+
+  const audioPlay = async (url) => {
+    const audio = new Audio(url);
+
+    audio.play()
+      .then(() => {
+        console.log('Audio playback started.');
+      })
+      .catch((error) => {
+        console.error('Error playing audio:', error);
+      });
+  }
 
   useEffect(() => {
     setActiveSlideText(itemList[currentSlide]?.text || itemList[0].text);
@@ -43,10 +67,10 @@ const TextView = ({ itemList }) => {
   return (
       <div className='ml-auto w-3/4 h-screen flex flex-col'>
         <div className='w-full' style={{height: '100%', background: '#ebecf0'}}>
-          <div className='mt-5 text-center text-4xl text-gray-900'>
+          <div className='mt-10 text-center text-4xl text-gray-900'>
             {currentSlide + 1} / {itemList.length} {itemList[currentSlide]?.presenter === "BOT" ? "🤖" : "🧑🏽"}
           </div>
-          <div className='mt-20 text-center text-xl px-10 leading-[5rem] text-gray-900'>
+          <div className='mt-10 text-center text-xl px-10 leading-[3rem] text-gray-900'>
             {activeSlideText}
           </div>
           

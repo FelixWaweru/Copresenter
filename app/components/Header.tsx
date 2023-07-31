@@ -5,15 +5,15 @@ import React, { Fragment } from 'react';
 import Link from 'next/link';
 
 
-const Menu = () => {
+const Header = () => {
 
   return (
     <>
-    <div className='bg-background w-full h-30'>
+    <div className='flex bg-background w-full h-90 m-2 py-5'>
       Header
     </div>
     </>
   );
 };
 
-export default Menu;
+export default Header;
