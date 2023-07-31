@@ -6,9 +6,15 @@ import { v4 as uuidv4 } from 'uuid';
 require('dotenv').config();
  
 export default async function handler(req, res) {
-  const voice = await ElevenLabs("Hello");
+    if (req.method !== 'POST') {
+        res.status(405).send({ message: 'Only POST requests allowed' })
+        return
+    }
+    const text = req.body.text;
+    const voice = await ElevenLabs(text);
+    console.log(voice)
 
-  res.status(200).json({ text: "Done" });
+    res.status(200).json({ text: "Done", data: voice });
 }
 
 const ElevenLabs = async (text) => {
@@ -21,13 +27,13 @@ const ElevenLabs = async (text) => {
           auth: { persistSession: false },
         })
 
-    const filename = `/tmp/${uuidv4()}.mp3`;
+    const filename = `${uuidv4()}.mp3`;
 
     try {
-        const res = await voice.textToSpeech(apiKey, voiceID, `${filename}`, text);
+        const res = await voice.textToSpeech(apiKey, voiceID, `/tmp/${filename}`, text);
         console.log(res);
 
-        const fileContent = fs.readFileSync(`${filename}`);
+        const fileContent = fs.readFileSync(`/tmp/${filename}`);
 
         try {
             const { data, error } = await supabase
@@ -38,10 +44,20 @@ const ElevenLabs = async (text) => {
                 upsert: false
             });
 
-            console.log(data, error)
+            console.log(data, error);
 
             if(!error) {
                 console.log(`Success, Audio saved as: ${filename}`);
+                const res = supabase
+                    .storage
+                    .from('avatars')
+                    .getPublicUrl(filename);
+
+                const publicURL = res.data;
+
+                fs.unlink(`/tmp/${filename}`);
+
+                return publicURL;
             }
             }
             catch (error)
