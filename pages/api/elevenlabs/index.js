@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import voice from 'elevenlabs-node';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 require('dotenv').config();
  
 export default async function handler(req, res) {
@@ -11,7 +10,9 @@ export default async function handler(req, res) {
         return
     }
     const text = req.body.text;
-    await ElevenLabs(text, res);
+    const publicURL = await ElevenLabs(text, res);
+
+    res.status(200).json(publicURL);
 }
 
 const ElevenLabs = async (text, res) => {
@@ -26,20 +27,18 @@ const ElevenLabs = async (text, res) => {
 
     const filename = `${uuidv4()}.mp3`;
 
+    
     try {
-        const response = await voice.textToSpeech(apiKey, voiceID, `/tmp/${filename}`, text);
-        console.log(response);
-
-        const fileContent = fs.readFileSync(`/tmp/${filename}`);
-
+        const response = await textToSpeechArrayBuffer(apiKey, voiceID, text);
+        console.log(response)
+        
         try {
             const { data, error } = await supabase
                 .storage
                 .from('audio_files')
-                .upload(filename, fileContent, {
-                cacheControl: '3600',
-                upsert: false
-            });
+                .upload(filename, response, {
+                    contentType: 'audio/mpeg'
+                });
 
             console.log(data, error);
 
@@ -47,23 +46,48 @@ const ElevenLabs = async (text, res) => {
                 console.log(`Success, Audio saved as: ${filename}`);
                 const res = supabase
                     .storage
-                    .from('avatars')
+                    .from('audio_files')
                     .getPublicUrl(filename);
 
                 const publicURL = res.data;
 
-                fs.unlink(`/tmp/${filename}`);
-
-                res.status(200).json({ link: publicURL});
+                return publicURL;
             }
             }
-            catch (error)
-            {
-                console.log(JSON.stringify(error));
-                res.status(500).json({ error: error});
-            }
-        } catch (error) {
-            console.error(JSON.stringify(error));
-            res.status(500).json({ error: error});
+        catch (error)
+        {
+            console.log(JSON.stringify(error));
+            return { error: error};
         }
+    } catch (error) {
+        console.error(JSON.stringify(error));
+        return { error: error};
+    }
+}
+
+const textToSpeechArrayBuffer = async (apiKey, voiceID, textInput) => {
+    	const voiceURL = `https://api.elevenlabs.io/v1/text-to-speech/${voiceID}/stream`;
+		const stabilityValue =  0;
+		const similarityBoostValue = 0;
+
+		const response = await axios({
+			method: 'POST',
+			url: voiceURL,
+			data: {
+				text: textInput,
+				voice_settings: {
+					stability: stabilityValue,
+					similarity_boost: similarityBoostValue
+				},
+				model_id: undefined
+			},
+			headers: {
+				'Accept': 'audio/mpeg',
+				'xi-api-key': apiKey,
+				'Content-Type': 'application/json',
+			},
+			responseType: 'arraybuffer'
+		});
+
+        return response.data;
 }
