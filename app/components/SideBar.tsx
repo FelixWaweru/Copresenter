@@ -2,24 +2,30 @@
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
-import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/solid';
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
+require('dotenv').config();
 
 const Sidebar = ({ children } : any) => {
+  // Fixes weird bug (https://github.com/atlassian/react-beautiful-dnd/issues/1756#issuecomment-599388505)
+  resetServerContext();
 
   const jsonList = [
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not five",
-      "presenter": "BOT"
+      "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
+      "presenter": "BOT",
+       "audio_link": ""
     },
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived only five",
-      "presenter": "PERSON"
+      "text": "Add your own reading parts for whenever the presentation needs a human touch.",
+      "presenter": "PERSON",
+       "audio_link": ""
     },
     {
-      "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has not only five",
-      "presenter": "BOT"
+      "text": "Drag & Drop to reorder the list. You can also edit and delete any slide. Go on, try it out 🧪",
+      "presenter": "PERSON",
+      "audio_link": ""
     }
   ];
 
@@ -92,16 +98,31 @@ const Sidebar = ({ children } : any) => {
     setNewSlidePresenter(newPresenter);
   };
 
-  const handleNewSlideSave = () => {
-    const newSlide = {
-      text: newSlideText,
-      presenter: newSlidePresenter
+  const handleNewSlideSave = async () => {
+    let newSlide = {};
+
+    if(newSlidePresenter === "BOT") {
+
+      const responseUrl = await audioGen(newSlideText);
+
+      newSlide = {
+        text: newSlideText,
+        presenter: newSlidePresenter,
+        audio_link: responseUrl
+      }
     }
+    else {
+      newSlide = {
+          text: newSlideText,
+          presenter: newSlidePresenter,
+          audio_link: ""
+        }
+      }
 
     const newItemList = [...itemList, newSlide];
 
     setItemList(newItemList);
-    setNewSlideOpen(wasOpened => !wasOpened);
+    setNewSlideOpen(!newSlideOpen);
   }
 
   const handleScrollButtonClick = () => {
@@ -113,16 +134,23 @@ const Sidebar = ({ children } : any) => {
     overflow: 'auto',
   };
 
+const audioGen = async (text) => {
+    const data = {
+      text: text
+    };
+
+    const response = await fetch("/api/elevenlabs", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+
+    return response.json();
+  }
+
   return (
     <div className='flex'>
-      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between'>
+      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#252627'}}>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
-          <Link href='/'>
-            <div className='bg-gray-100 hover:bg-gray-200 cursor-pointer my-4 p-3 rounded-lg inline-block'>
-              <PencilIcon className="h-6 w-6 text-primary"/>
-            </div>
-          </Link>
-
           <div className="w-full">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
@@ -132,38 +160,38 @@ const Sidebar = ({ children } : any) => {
                     {...provided.droppableProps}
                     ref={provided.innerRef}
                   >
-                    <div className='mb-5 m-1 p-5 w-full bg-gray-200 rounded-lg text-gray-800' onClick={handleNewSlide}>
-                      Select AI Speaker
+                    <div className='mb-5 m-1 p-3 w-full bg-green-400 rounded-lg text-gray-800 text-base'>
+                      Select Voice
                       <select className='w-full' id="dropdown" value="AI Name">
                         <option value="BOT">🤖 AI</option>
                         <option value="PERSON">🧑🏽 PERSON</option>
                       </select>
                     </div>
                     {itemList.map((item, index) => (
-                      <Draggable key={index} draggableId={index.toString()} index={index}>
+                      <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
                         {(provided, snapshot) => (
                           <div
-                          className='m-1 p-3 w-full rounded-lg text-gray-800 text-sm'
+                          className='m-1 p-3 w-full rounded-lg text-gray-800 text-xs bg-gray-900'
                             ref={provided.innerRef}
-                            {...provided.dragHandleProps}
                             {...provided.draggableProps}
+                            {...provided.dragHandleProps}
                             style={getItemStyle(
                               snapshot.isDragging,
-                              provided.draggableProps.style
+                              provided.draggableProps.style,
                             )}
                           >
-                            <div className='flex'>                        
-                              <h2 className='text-green-500 text-lg w-1/4'>
+                            <div className='flex'> 
+                              <h2 className='text-green-300 text-base w-1/4'>
                                 {index + 1}
                               </h2>
                               <select className='w-2/4' id="dropdown" value={item.presenter} onChange={event => handlePresenterChange(event, index)}>
                                 <option value="BOT">🤖 AI</option>
                                 <option value="PERSON">🧑🏽 PERSON</option>
                               </select>
-                              <div className='w-auto bg-green-400 hover:bg-green-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleEdit(index)}>
+                              <div className='w-auto bg-green-400 hover:bg-green-300 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleEdit(index)}>
                                 <PencilIcon className="h-4 w-4 text-primary"/>
                               </div>
-                              <div className='w-auto bg-red-400 hover:bg-red-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleDelete(index)}>
+                              <div className='w-auto bg-red-400 hover:bg-red-300 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={r => handleDelete(index)}>
                                 <TrashIcon className="h-4 w-4 text-primary"/>
                               </div>
                             </div>
@@ -181,7 +209,7 @@ const Sidebar = ({ children } : any) => {
                     className='m-1 mt-5 p-3 w-full rounded-lg text-gray-800 text-sm bg-white'
                     >
                       <div className='flex'>                            
-                        <h2 className='text-green-500 text-lg w-1/4'>
+                        <h2 className='text-green-300 text-lg w-1/4'>
                           +
                         </h2>
                         <select className='w-3/4' id="dropdown" value={newSlidePresenter} onChange={event => handleNewSlidePresenter(event)}>
@@ -191,23 +219,24 @@ const Sidebar = ({ children } : any) => {
                       </div>
                       <br />
 
-                      <textarea name="body" className='w-full border border-2 border-gray-500 rounded-lg' 
+                      <textarea name="body" className='w-full border border-2 border-gray-300 rounded-lg'
+                        maxLength={200}
                         placeholder='Add Speaker Lines Here..'
                         onChange={event => handleNewSlideText(event)}/>
                       <div className='flex'>
-                        <div className='w-auto bg-green-400 hover:bg-green-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={handleNewSlideSave}>
+                        <div className='w-auto bg-green-400 hover:bg-green-300 cursor-pointer mx-1 p-2 rounded-lg inline-block text-white' onClick={handleNewSlideSave}>
                           Save
                         </div>
-                        <div className='w-auto bg-red-400 hover:bg-red-500 cursor-pointer mx-1 p-2 rounded-lg inline-block' onClick={handleNewSlide}>
+                        <div className='w-auto bg-red-400 hover:bg-red-300 cursor-pointer mx-1 p-2 rounded-lg inline-block text-white' onClick={handleNewSlide}>
                           Cancel
                         </div>
                       </div>
                     </div>
                     )}
                     {!newSlideOpen && (
-                    <div className='flex mt-5 m-1 p-5 w-full bg-green-400 hover:bg-green-500 rounded-lg text-gray-800' onClick={handleNewSlide}>
+                    <div className='flex mt-5 m-1 p-3 w-full bg-green-400 hover:bg-green-300 rounded-lg text-gray-800 text-base' onClick={handleNewSlide}>
                       <PlusIcon className="h-6 w-6 mr-2"/>
-                      Add New Slide
+                      Add New Card
                     </div>
                     )}
                   </div>
