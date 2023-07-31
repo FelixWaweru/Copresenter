@@ -67,7 +67,7 @@ const TextView = ({ itemList }) => {
   return (
       <div className='ml-auto w-3/4 h-screen flex flex-col'>
         <div className='w-full' style={{height: '100%', background: '#ebecf0'}}>
-          <div className='mt-10 text-center text-4xl text-gray-900'>
+          <div className='mt-20 text-center text-4xl text-gray-900'>
             {currentSlide + 1} / {itemList.length} {itemList[currentSlide]?.presenter === "BOT" ? "🤖" : "🧑🏽"}
           </div>
           <div className='mt-10 text-center text-xl px-10 leading-[3rem] text-gray-900'>

@@ -14,6 +14,11 @@ const Sidebar = ({ children } : any) => {
 
   const jsonList = [
     {
+      "text": "Copresenter is an AI project that offers users a virtual co-presenter and delivers a lifelike co-hosting experience, making presentations more dynamic and interactive.",
+      "presenter": "BOT",
+       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/28c88fdd-bbc7-4512-828f-78ca84934ce2.mp3"
+    },
+    {
       "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
       "presenter": "BOT",
        "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/e2c4cfae-d0b5-4135-ace6-bbcb62a503bd.mp3"
@@ -220,7 +225,7 @@ const Sidebar = ({ children } : any) => {
                     ref={provided.innerRef}
                   >
                     <div className='mb-5 m-1 pb-5 p-3 w-full rounded-lg text-white text-2xl text-center'>
-                      Copresenter
+                      COPRESENTER
                     </div>
                     {itemList.map((item, index) => (
                       <Draggable key={index.toString()} draggableId={index.toString()} index={index}>
