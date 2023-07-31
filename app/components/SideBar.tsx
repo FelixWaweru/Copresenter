@@ -5,33 +5,27 @@ import Link from 'next/link';
 import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
 import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
-import { createClient } from '@supabase/supabase-js'
-import voice from 'elevenlabs-node';
 require('dotenv').config();
-
-const apiKey = process.env.ELEVEN_API_KEY;
-const voiceID = process.env.ELEVEN_VOICE_ID;
 
 const Sidebar = ({ children } : any) => {
   // Fixes weird bug (https://github.com/atlassian/react-beautiful-dnd/issues/1756#issuecomment-599388505)
   resetServerContext();
 
-  const supabaseUrl = 'https://maccvsbijpvqcraqmibj.supabase.co'
-  const supabaseKey = process.env.SUPABASE_KEY
-  const supabase = createClient(supabaseUrl, supabaseKey)
-
   const jsonList = [
     {
       "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
-      "presenter": "BOT"
+      "presenter": "BOT",
+       "audio_link": ""
     },
     {
       "text": "Add your own reading parts for whenever the presentation needs a human touch.",
-      "presenter": "PERSON"
+      "presenter": "PERSON",
+       "audio_link": ""
     },
     {
       "text": "Drag & Drop to reorder the list. You can also edit and delete any slide. Go on, try it out 🧪",
-      "presenter": "PERSON"
+      "presenter": "PERSON",
+      "audio_link": ""
     }
   ];
 
@@ -104,11 +98,26 @@ const Sidebar = ({ children } : any) => {
     setNewSlidePresenter(newPresenter);
   };
 
-  const handleNewSlideSave = () => {
-    const newSlide = {
-      text: newSlideText,
-      presenter: newSlidePresenter
+  const handleNewSlideSave = async () => {
+    let newSlide = {};
+
+    if(newSlidePresenter === "BOT") {
+
+      const responseUrl = await audioGen(newSlideText);
+
+      newSlide = {
+        text: newSlideText,
+        presenter: newSlidePresenter,
+        audio_link: responseUrl
+      }
     }
+    else {
+      newSlide = {
+          text: newSlideText,
+          presenter: newSlidePresenter,
+          audio_link: ""
+        }
+      }
 
     const newItemList = [...itemList, newSlide];
 
@@ -125,46 +134,23 @@ const Sidebar = ({ children } : any) => {
     overflow: 'auto',
   };
 
-  const audioGen = async (text) => {
-    const filename = `/tmp/${new Date(new Date().getTime() + (3 * 60 * 60 * 1000)).toISOString().slice(0,10)}.mp3`;
+const audioGen = async (text) => {
+    const data = {
+      text: text
+    };
 
-    try {
-      const res = await voice.textToSpeech(apiKey, voiceID, filename, text);
-      console.log(res);
+    const response = await fetch("/api/elevenlabs", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
 
-      try {
-        const { data, error } = await supabase
-          .storage
-          .from('avatars')
-          .upload(filename, res, {
-            cacheControl: '3600',
-            upsert: false
-        });
-
-        if(!error) {
-          console.log(`Success, Audio saved as: ${filename}`);
-        }
-      }
-      catch (error)
-      {
-        console.log(error);
-      }
-      } catch (error) {
-        console.error(error);
-      }
-    }
+    return response.json();
   }
 
   return (
     <div className='flex'>
       <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#252627'}}>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
-          <Link href='/'>
-            <div className='bg-green-400 cursor-pointer my-4 p-3 rounded-lg inline-block'>
-              <PencilIcon className="h-6 w-6 text-primary"/>
-            </div>
-          </Link>
-
           <div className="w-full">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
@@ -175,7 +161,7 @@ const Sidebar = ({ children } : any) => {
                     ref={provided.innerRef}
                   >
                     <div className='mb-5 m-1 p-3 w-full bg-green-400 rounded-lg text-gray-800 text-base'>
-                      Select AI Speaker
+                      Select Voice
                       <select className='w-full' id="dropdown" value="AI Name">
                         <option value="BOT">🤖 AI</option>
                         <option value="PERSON">🧑🏽 PERSON</option>
