@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
-import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, ArrowRightIcon , PlusIcon } from '@heroicons/react/24/solid';
 import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
 import Loader from './Loader';
@@ -14,9 +14,9 @@ const Sidebar = ({ children } : any) => {
 
   const jsonList = [
     {
-      "text": "Copresenter is an AI project that offers users a virtual co-presenter and delivers a lifelike co-hosting experience, making presentations more dynamic and interactive.",
+      "text": "Copresenter is a virtual co-host that makes presentations a breeze by using AI to read out your slides, freeing you from prep hassles and letting you focus on delivery.",
       "presenter": "BOT",
-       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/28c88fdd-bbc7-4512-828f-78ca84934ce2.mp3"
+       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/9d6dc8f9-36b2-468a-8e62-8504ac7aa194.mp3"
     },
     {
       "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
@@ -86,6 +86,20 @@ const Sidebar = ({ children } : any) => {
 
   const [loading, setLoading] = useState(false);
   const [scroll, setScroll] = useState(false);
+
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarVisible((prevState) => !prevState);
+  };
+
+  const sidebarClassName = `fixed ${
+    sidebarVisible ? 'w-3/4 md:w-1/4 h-screen' : 'w-15 h-15'
+  } bg-background border-r-[1px] flex flex-col justify-between`;
+
+  const sidebarStyle = {
+    background: '#111827',
+  };
 
   // Function to update list on drop
   const handleDrop = (result) => {
@@ -213,9 +227,15 @@ const Sidebar = ({ children } : any) => {
       {loading && 
         (<Loader />)
       }
-      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#111827'}}>
+      <div className={sidebarClassName} style={sidebarStyle}>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
-          <div className="w-full">
+          <div className='w-auto md:hidden'>
+            <div className='bg-green-400 cursor-pointer mx-1 p-2 rounded-lg origin-left' onClick={toggleSidebar}>
+              <ArrowRightIcon className="h-4 w-4 text-gray-800"/>
+            </div>
+          </div>
+          {sidebarVisible && 
+          (<div className="w-full mt-5 md:mt-1">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
                 {(provided) => (
@@ -303,7 +323,8 @@ const Sidebar = ({ children } : any) => {
                 )}
               </Droppable>
             </DragDropContext>
-          </div>
+          </div>)
+          }
         </div>
       </div>
       {/* <main className='ml-auto w-3/4'>{children}</main> */}
