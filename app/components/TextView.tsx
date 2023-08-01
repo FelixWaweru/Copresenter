@@ -86,7 +86,7 @@ const TextView = ({ itemList }) => {
   },[currentSlide, itemList]);
 
   return (
-      <div className='ml-auto w-3/4 h-screen flex flex-col'>
+      <div className='ml-auto w-4/4 md:w-3/4 h-screen flex flex-col'>
         <div className='w-full' style={{height: '100%', background: '#ebecf0'}}>
           <div className='mt-20 text-center text-4xl text-gray-900'>
             {currentSlide + 1} / {itemList.length} {itemList[currentSlide]?.presenter === "BOT" ? "🤖" : "🧑🏽"}
@@ -95,27 +95,27 @@ const TextView = ({ itemList }) => {
             {activeSlideText}
           </div>
           
-          <div className='fixed bottom-0 bg-gray-900 w-3/4 flex justify-center items-center'>
-              <div onClick={handlePrevSlideClick} className='hover:bg-green-500 cursor-pointer my-4 p-3 rounded-lg inline-block'>
-                <BackwardIcon className="h-10 w-10 text-white"/>
-              </div>
+        </div>
+        <div className='bottom-0 bg-gray-900 flex justify-center items-center'>
+            <div onClick={handlePrevSlideClick} className='hover:bg-green-500 cursor-pointer my-4 p-3 rounded-lg inline-block'>
+              <BackwardIcon className="h-10 w-10 text-white"/>
+            </div>
 
-              {speaking && (
-              <div onClick={handleAudioPlayerPause} className='bg-green-500 hover:bg-green-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
-                <SpeakerWaveIcon className="h-10 w-10 text-white"/>
-              </div>
-              )}
+            {speaking && (
+            <div onClick={handleAudioPlayerPause} className='bg-green-500 hover:bg-green-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
+              <SpeakerWaveIcon className="h-10 w-10 text-white"/>
+            </div>
+            )}
 
-              {!speaking && (
-              <div onClick={handleAudioPlayerToggle} className='bg-red-500 hover:bg-red-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
-                <SpeakerXMarkIcon className="h-10 w-10 text-white"/>
-              </div>
-              )}
+            {!speaking && (
+            <div onClick={handleAudioPlayerToggle} className='bg-red-500 hover:bg-red-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
+              <SpeakerXMarkIcon className="h-10 w-10 text-white"/>
+            </div>
+            )}
 
-              <div onClick={handleNextSlideClick} className='hover:bg-green-500 cursor-pointer my-4 p-3 rounded-lg inline-block'>
-                <ForwardIcon className="h-10 w-10 text-white"/>
-              </div>
-          </div>
+            <div onClick={handleNextSlideClick} className='hover:bg-green-500 cursor-pointer my-4 p-3 rounded-lg inline-block'>
+              <ForwardIcon className="h-10 w-10 text-white"/>
+            </div>
         </div>
       </div>
   );

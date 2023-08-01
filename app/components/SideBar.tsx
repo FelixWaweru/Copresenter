@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
-import { TrashIcon, PencilIcon, PlusIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, ArrowRightIcon , PlusIcon } from '@heroicons/react/24/solid';
 import { DragDropContext, Droppable, Draggable, resetServerContext } from "react-beautiful-dnd";
 import TextView from './TextView';
 import Loader from './Loader';
@@ -86,6 +86,20 @@ const Sidebar = ({ children } : any) => {
 
   const [loading, setLoading] = useState(false);
   const [scroll, setScroll] = useState(false);
+
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarVisible((prevState) => !prevState);
+  };
+
+  const sidebarClassName = `fixed ${
+    sidebarVisible ? 'w-3/4 md:w-1/4 h-screen' : 'w-15 h-15'
+  } bg-background border-r-[1px] flex flex-col justify-between`;
+
+  const sidebarStyle = {
+    background: '#111827',
+  };
 
   // Function to update list on drop
   const handleDrop = (result) => {
@@ -213,9 +227,15 @@ const Sidebar = ({ children } : any) => {
       {loading && 
         (<Loader />)
       }
-      <div className='fixed w-1/4 h-screen bg-background border-r-[1px] flex flex-col justify-between' style={{background: '#111827'}}>
+      <div className={sidebarClassName} style={sidebarStyle}>
         <div className='flex flex-col items-center p-4' style={containerStyle}>
-          <div className="w-full">
+          <div className='w-auto md:hidden'>
+            <div className='bg-green-400 cursor-pointer mx-1 p-2 rounded-lg origin-left' onClick={toggleSidebar}>
+              <ArrowRightIcon className="h-4 w-4 text-gray-800"/>
+            </div>
+          </div>
+          {sidebarVisible && 
+          (<div className="w-full mt-5 md:mt-1">
             <DragDropContext onDragEnd={handleDrop}>
               <Droppable droppableId="list-container">
                 {(provided) => (
@@ -303,7 +323,8 @@ const Sidebar = ({ children } : any) => {
                 )}
               </Droppable>
             </DragDropContext>
-          </div>
+          </div>)
+          }
         </div>
       </div>
       {/* <main className='ml-auto w-3/4'>{children}</main> */}
