@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpeakerWaveIcon, SpeakerXMarkIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 const TextView = ({ itemList }) => {
   const [scroll, setScroll] = useState(false);
@@ -116,6 +117,14 @@ const TextView = ({ itemList }) => {
             <div onClick={handleNextSlideClick} className='hover:bg-green-500 cursor-pointer my-4 p-3 rounded-lg inline-block'>
               <ForwardIcon className="h-10 w-10 text-white"/>
             </div>
+        </div>
+        <div className='bottom-0 bg-gray-900 flex justify-center items-center text-xs pb-2 text-gray-500'>
+          by &nbsp;
+          <Link href="https://github.com/FelixWaweru" 
+                className='text-green-300'
+                target="_blank">
+            FelixWaweru
+          </Link>
         </div>
       </div>
   );
