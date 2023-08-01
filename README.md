@@ -1,34 +1,40 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Copresenter
 
-## Getting Started
+Copresenter is a virtual co-host that makes presentations a breeze by using AI to read out your slides, freeing you from prep hassles and letting you focus on delivery.
 
-First, run the development server:
+
+[![Copresenter](./public/index.png)](https://copresenter.vercel.app/)
+
+## How it works
+
+Save time, enhance your delivery, and focus on perfecting your presentation's content. With our service, simply input your text or speech into a new speaking card and our service automatically generates a lifelike narration using the [ElevenLabs](https://elevenlabs.io/) text-to-speech AI.
+
+Additionally,  Copresenter offers customizable speaking cards displayed clearly on the UI for ease of reading, elevating your workflow and helping you make effortless presentations.
+
+## Stack
+- ElevenLabs
+- Next.JS
+- Vercel
+- Tailwind
+
+## Running Locally
+
+### Clone the repository to your local machine.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+git clone https://github.com/FelixWaweru/Copresenter
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Install the dependencies.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Run the application.
 
-## Learn More
+Finally, run the application in the command line. It will be served at `http://localhost:3000`.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+pnpm run dev
+```
