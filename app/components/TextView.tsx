@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SpeakerWaveIcon, SpeakerXMarkIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/outline';
 
@@ -10,6 +10,8 @@ const TextView = ({ itemList }) => {
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [activeSlideText, setActiveSlideText] = useState(itemList[currentSlide]?.text || itemList[0].text);
+
+  const audioRef = useRef(null);
 
   const handleScrollButtonClick = () => {
     setScroll(!scroll);
@@ -22,6 +24,9 @@ const TextView = ({ itemList }) => {
       setCurrentSlide(nextSlideValue);
 
       if(itemList[nextSlideValue].presenter === "BOT" && itemList[nextSlideValue].audio_link !== "" && speaking) {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
         audioPlay(itemList[nextSlideValue].audio_link);
       }
     }
@@ -34,6 +39,9 @@ const TextView = ({ itemList }) => {
       setCurrentSlide(prevSlideValue);
 
       if(itemList[prevSlideValue].presenter === "BOT" && itemList[prevSlideValue].audio_link !== "" && speaking) {
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
         audioPlay(itemList[prevSlideValue].audio_link);
       }
     }
@@ -44,12 +52,25 @@ const TextView = ({ itemList }) => {
     setSpeaking(newSpeaking);
 
     if(itemList[currentSlide].presenter === "BOT" && itemList[currentSlide].audio_link !== "" && newSpeaking) {
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
       audioPlay(itemList[currentSlide].audio_link);
+    }
+  };
+
+  const handleAudioPlayerPause = () => {
+    const newSpeaking = !speaking;
+    setSpeaking(newSpeaking);
+
+    if (audioRef.current) {
+        audioRef.current.pause();
     }
   };
 
   const audioPlay = async (url) => {
     const audio = new Audio(url);
+    audioRef.current = audio;
 
     audio.play()
       .then(() => {
@@ -80,7 +101,7 @@ const TextView = ({ itemList }) => {
               </div>
 
               {speaking && (
-              <div onClick={handleAudioPlayerToggle} className='bg-green-500 hover:bg-green-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
+              <div onClick={handleAudioPlayerPause} className='bg-green-500 hover:bg-green-400 cursor-pointer my-4 mx-2 p-3 rounded-lg inline-block'>
                 <SpeakerWaveIcon className="h-10 w-10 text-white"/>
               </div>
               )}
