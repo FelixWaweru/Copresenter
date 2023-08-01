@@ -14,9 +14,9 @@ const Sidebar = ({ children } : any) => {
 
   const jsonList = [
     {
-      "text": "Copresenter is an AI project that offers users a virtual co-presenter and delivers a lifelike co-hosting experience, making presentations more dynamic and interactive.",
+      "text": "Copresenter is a virtual co-host that makes presentations a breeze by using AI to read out your slides, freeing you from prep hassles and letting you focus on delivery.",
       "presenter": "BOT",
-       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/28c88fdd-bbc7-4512-828f-78ca84934ce2.mp3"
+       "audio_link": "https://maccvsbijpvqcraqmibj.supabase.co/storage/v1/object/public/audio_files/9d6dc8f9-36b2-468a-8e62-8504ac7aa194.mp3"
     },
     {
       "text": "Add your text, presentation or speech and have your very own AI Copresenter narrate it out for you.",
